@@ -11,7 +11,6 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeFailureException;
 import org.springframework.web.socket.server.HandshakeHandler;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
-import org.springframework.web.util.WebUtils;
 
 import java.util.Map;
 
@@ -26,20 +25,21 @@ public class AuthHandshakeHandler implements HandshakeHandler {
                                WebSocketHandler wsHandler,
                                Map<String, Object> attributes) throws HandshakeFailureException {
         ServletServerHttpRequest request = (ServletServerHttpRequest) serverRequest;
-        String jwt = WebUtils.getCookie(request.getServletRequest(), "X-Authorization").getValue();
-        if (canAuthorize(jwt)) {
+        Account account = authenticate(request);
+        if (account != null) {
+            attributes.put("account", account);
             return defaultHandshakeHandler.doHandshake(serverRequest, response, wsHandler, attributes);
         }
         response.setStatusCode(HttpStatus.FORBIDDEN);
         return false;
     }
 
-    private boolean canAuthorize(String jwt) {
+    private Account authenticate(ServletServerHttpRequest request) {
+        String jwt = request.getServletRequest().getParameter("jwt");
         try {
-            Account account = new JwtAuthentication(jwt).getAccount();
-            return account != null;
+            return new JwtAuthentication(jwt).getAccount();
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 }

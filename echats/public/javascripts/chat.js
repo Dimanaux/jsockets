@@ -9,7 +9,7 @@ function fetchHistory() {
     fetch(url, {
         method: 'GET',
         mode: 'cors',
-        headers: { 'Content-Type': 'application/json', 'jwt': localStorage.getItem('jwt') }
+        headers: {'Content-Type': 'application/json', 'jwt': localStorage.jwt}
     }).then(response => response.json())
         .then(messages => {
             messages.forEach(prependMessage);
@@ -17,20 +17,15 @@ function fetchHistory() {
 }
 
 function connect() {
-    document.cookie = `X-Authorization=${localStorage.getItem('jwt')};path=/`;
-    webSocket = new WebSocket(wsUrl);
+    let jwtParam = encodeURI(`jwt=${localStorage.jwt}`);
+    webSocket = new WebSocket(`${wsUrl}?${jwtParam}`);
 
-    webSocket.onmessage = function receiveMessage(response) {
-        console.log(response);
-        debugger;
-        let data = response['data'];
-        let json = JSON.parse(data);
-        prependMessage(json);
+    webSocket.onmessage = (response) => {
+        let message = JSON.parse(response.data);
+        prependMessage(message);
     };
 
-    webSocket.onerror = function errorShow() {
-        alert('Ошибка авторизации')
-    }
+    webSocket.onerror = () => alert('Ошибка авторизации');
 }
 
 function prependMessage(message) {
@@ -50,23 +45,8 @@ function sendMessage() {
     let input = document.getElementById('message-input');
     let text = input.value;
 
-    let message = {
-        "from": localStorage.getItem('jwt'),
-        "text": text
-    };
+    let message = {'text': text};
 
     webSocket.send(JSON.stringify(message));
-}
-
-function waitForMessage() {
-    let url = `${host}/messages/notification`;
-    fetch(url, {
-        method: 'GET',
-        mode: 'cors',
-        headers: { 'Content-Type': 'application/json', 'jwt': localStorage.getItem('jwt') }
-    }).then(response => response.json())
-        .then(message => {
-            prependMessage(message);
-            waitForMessage();
-        });
+    input.value = '';
 }
