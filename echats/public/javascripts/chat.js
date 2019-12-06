@@ -31,7 +31,7 @@ function connect() {
 function prependMessage(message) {
     const messages = document.getElementById('messages');
     let messageView = document.createElement('div');
-    messageView.classList.add('card')
+    messageView.classList.add('card');
     messageView.classList.add('mt-4');
     messageView.innerHTML = `
     <div class="card-body">

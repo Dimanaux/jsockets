@@ -14,6 +14,10 @@ public class Messages {
         this.repository = repository;
     }
 
+    public List<Message> all() {
+        return repository.findAll();
+    }
+
     synchronized
     public Message waitForNewMessage() {
         safeWait();

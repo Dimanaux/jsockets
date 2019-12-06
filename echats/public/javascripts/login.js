@@ -18,7 +18,7 @@ function login() {
     })
         .then(response => response.json())
         .then(body => {
-            localStorage.setItem('jwt', body['jwt']);
+            localStorage.jwt = body['jwt'];
             window.location.replace('/pages/chat.html');
         });
 }
