@@ -16,7 +16,6 @@ import java.util.Map;
 
 @Component
 public class AuthHandshakeHandler implements HandshakeHandler {
-
     private DefaultHandshakeHandler defaultHandshakeHandler = new DefaultHandshakeHandler();
 
     @Override

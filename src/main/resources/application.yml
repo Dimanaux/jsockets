@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/stomp
+    url: jdbc:postgresql://postgresql:5432/stomp
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver

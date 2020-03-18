@@ -22,10 +22,8 @@ public class StompController {
         this.messages = messages;
     }
 
-    // если сообщение пришло на /app/hello
     @MessageMapping("/hello")
     public void getMessage(Message<?> stompMessage) {
-        // отправляем hello всем, кто подписан на /topic/chat
         LinkedMultiValueMap<String, String> nativeHeaders =
                 (LinkedMultiValueMap<String, String>) stompMessage.getHeaders().get("nativeHeaders");
         String jwt = nativeHeaders.getFirst("jwt");
